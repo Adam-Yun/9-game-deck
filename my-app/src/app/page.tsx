@@ -1,7 +1,42 @@
+"use client";
+
 import Image from "next/image";
 import styles from "./page.module.css";
 
+import React, { useState } from 'react';
+
 export default function Home() {
+  // loading holds the value, setLoading updates the value of loading
+  const [loading, setLoading] = useState(false);
+  // responseData holds the value, setResponseData updates the value of loading
+  const [responseData, setResponseData] = useState<any>(null);
+  // BASE_URL is the URL of the server 
+  const BASE_URL = 'https://eb5b-175-209-149-13.ngrok-free.app';
+
+  // handlePostRequest function is an async function that makes a POST request to the server
+  const handlePostRequest = async () => {
+    setLoading(true);
+    const data = { query: 'your query here' };
+
+    try {
+      console.log('Sending request');
+      const response = await fetch(BASE_URL + "/checkConnection", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+      const result = await response.json();
+      setResponseData(result);
+      console.log(result);
+    } catch (error) {
+      console.error('Error:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -18,6 +53,7 @@ export default function Home() {
             Get started by editing <code>src/app/page.tsx</code>.
           </li>
           <li>Save and see your changes instantly.</li>
+          <button onClick={handlePostRequest} disabled={loading}>Check Server Connection</button>
         </ol>
 
         <div className={styles.ctas}>
